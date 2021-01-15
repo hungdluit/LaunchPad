@@ -21,8 +21,49 @@ namespace LaunchPad.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Job>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<Job>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
+            
+            modelBuilder.Entity<Script>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<Script>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
+            
+            modelBuilder.Entity<User>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<User>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
+            
+            modelBuilder.Entity<Role>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<Role>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
+            
             modelBuilder.Entity<UserRole>()
-                .HasKey(r => new { r.UserId, r.RoleId });
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<UserRole>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<UserRole>()
+                .HasIndex(r => new { r.UserId, r.RoleId })
+                .IsUnique();
 
             modelBuilder.Entity<UserRole>()
                 .HasOne(u => u.User)
@@ -33,9 +74,18 @@ namespace LaunchPad.Data
                 .HasOne(r => r.Role)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(r => r.RoleId);
+            
+            modelBuilder.Entity<UserCategory>()
+                .HasKey(x => x.Id);
+            
+            modelBuilder.Entity<UserCategory>()
+                .Property(x => x.Id)
+                .IsRequired()
+                .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<UserCategory>()
-                .HasKey(r => new { r.UserId, r.CategoryId });
+                .HasIndex(r => new { r.UserId, r.CategoryId })
+                .IsUnique();
 
             modelBuilder.Entity<UserCategory>()
                 .HasOne(r => r.User)

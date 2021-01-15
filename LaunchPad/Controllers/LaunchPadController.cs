@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace LaunchPad.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     public class LaunchPadController : BaseController
     {

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using AutoMapper;
+using Hangfire.Storage.SQLite;
 
 namespace LaunchPad
 {
@@ -29,14 +30,17 @@ namespace LaunchPad
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite("Data Source=launchpad.db"));
 
             // Automapper
-            services.AddAutoMapper();
+            services.AddAutoMapper(typeof(Startup));
 
             // Add framework services.
-            services.AddMvc();
-            services.AddHangfire(config => config.UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+            services.AddHangfire(configuration => configuration
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSQLiteStorage());
 
             // Add DI
             services.AddTransient<IScriptRepository, ScriptRepository>();
@@ -66,9 +70,6 @@ namespace LaunchPad
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -93,6 +94,9 @@ namespace LaunchPad
                 // Seed the database
                 using (var scope = app.ApplicationServices.CreateScope())
                 {
+                    var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                    dbContext.Database.EnsureCreated();
+                    dbContext.Database.Migrate();
                     var seeder = scope.ServiceProvider.GetService<Seeder>();
                     seeder.Seed();
                 }
@@ -100,8 +104,7 @@ namespace LaunchPad
 
             // HangFire
             app.UseHangfireServer();
-            app.UseHangfireDashboard("/Scripts/Jobs");           
-
+            app.UseHangfireDashboard("/Scripts/Jobs");
         }
     }
 }

@@ -25,7 +25,12 @@ namespace LaunchPad.Controllers
                                 .Include(ur => ur.Categories)
                                 .ThenInclude(ur => ur.Category)
                                 .AsNoTracking()
-                                .FirstOrDefault(u => String.Equals(u.Username, User.Identity.Name, StringComparison.CurrentCultureIgnoreCase));
+                                .FirstOrDefault(u => u.Username == User.Identity.Name);
+            if (user == null)
+            {
+                return default;
+            }
+            
             return user.Categories.Select(x => x.CategoryId);
         }
 

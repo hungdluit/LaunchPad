@@ -14,7 +14,6 @@ using System.Linq;
 
 namespace LaunchPad.Controllers
 {
-    [Authorize]
     public class PowerShellController : BaseController
     {
         private IScriptRepository _scriptRepository;
@@ -39,7 +38,6 @@ namespace LaunchPad.Controllers
 
         // GET: /PowerShell/Create
         [HttpGet]
-        [Authorize(Policy = "Author")]
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(_scriptRepository.GetCategories().ToList(), "Id", "Name");
@@ -48,7 +46,6 @@ namespace LaunchPad.Controllers
 
         // POST: /PowerShell/Create
         [HttpPost, ValidateAntiForgeryToken]
-        [Authorize(Policy = "Author")]
         public IActionResult Create(PowerShellViewModel newScript)
         {
             if (_scriptIO.ScriptExists(newScript.Name))
@@ -79,7 +76,6 @@ namespace LaunchPad.Controllers
         }
 
         // GET: PowerShell/Edit/5
-        [Authorize(Policy = "Author")]
         public ActionResult Edit(int id)
         {
             var script = _scriptRepository.GetScriptById(id);
@@ -97,7 +93,6 @@ namespace LaunchPad.Controllers
         // POST: PowerShell/Edit/5
         [HttpPost] //TODO: //Need to turn off ValidateInput
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Author")]
         public ActionResult Edit(PowerShellViewModel vmScript)
         {
             var script = _scriptRepository.GetScriptById(vmScript.Id);
@@ -265,7 +260,6 @@ namespace LaunchPad.Controllers
 
 
         // GET: PowerShell/Delete/1
-        [Authorize(Policy = "Author")]
         public ActionResult Delete(int id)
         {
             var script = _scriptRepository.GetScriptById(id);
@@ -278,7 +272,6 @@ namespace LaunchPad.Controllers
         }
 
         // POST: PowerShell/Delete/1
-        [Authorize(Policy = "Author")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

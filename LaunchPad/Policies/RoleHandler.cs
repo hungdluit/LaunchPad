@@ -16,25 +16,25 @@ namespace LaunchPad.Policies
         {
             _context = context;
         }
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)
+
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+            RoleRequirement requirement)
         {
-            var user = _context.Users
+            var user = await _context.Users
                 .Include(ur => ur.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
-                .FirstOrDefault(u => String.Equals(u.Username, context.User.Identity.Name, StringComparison.CurrentCultureIgnoreCase));
+                .FirstOrDefaultAsync(u => u.Username == context.User.Identity.Name);
 
             if (user == null)
-                return Task.CompletedTask;
+                return;
 
             var userIsAdmin = user.UserRoles.Any(ur => ur.Role.Name == requirement.Role);
-            
+
             if (userIsAdmin)
             {
                 context.Succeed(requirement);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

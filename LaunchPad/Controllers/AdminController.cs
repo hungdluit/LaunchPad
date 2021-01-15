@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LaunchPad.Controllers
 {
-    [Authorize(Policy = "Administrator")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
