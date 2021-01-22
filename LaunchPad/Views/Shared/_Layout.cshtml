@@ -35,10 +35,12 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="PowerShell" asp-action="Index">PowerShell</a></li>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, "Administrator")).Succeeded)
-                    {
-                        <li><a asp-area="" asp-controller="Admin" asp-action="Index"><i class="glyphicon glyphicon-cog"></i> Admin</a></li>
-                    }
+                                            <li><a asp-area="" asp-controller="Admin" asp-action="Index"><i class="glyphicon glyphicon-cog"></i> Admin</a></li>
+
+                    @* @if ((await AuthorizationService.AuthorizeAsync(User, "Administrator")).Succeeded) *@
+                    @* { *@
+                    @*     <li><a asp-area="" asp-controller="Admin" asp-action="Index"><i class="glyphicon glyphicon-cog"></i> Admin</a></li> *@
+                    @* } *@
                 </ul>
                 <p class="nav navbar-text navbar-right">@User.Identity.Name</p>
             </div>

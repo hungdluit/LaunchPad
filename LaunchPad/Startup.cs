@@ -18,9 +18,16 @@ namespace LaunchPad
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName ?? "Production"}.json", optional: true)
+                .AddJsonFile("appsettings.local.json", optional: true)
+                .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -28,6 +35,8 @@ namespace LaunchPad
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(Configuration);
+            
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite("Data Source=launchpad.db"));
@@ -96,7 +105,6 @@ namespace LaunchPad
                 {
                     var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                     dbContext.Database.EnsureCreated();
-                    dbContext.Database.Migrate();
                     var seeder = scope.ServiceProvider.GetService<Seeder>();
                     seeder.Seed();
                 }

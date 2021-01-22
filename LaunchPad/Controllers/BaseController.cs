@@ -28,7 +28,7 @@ namespace LaunchPad.Controllers
                                 .FirstOrDefault(u => u.Username == User.Identity.Name);
             if (user == null)
             {
-                return default;
+                return new List<int>();
             }
             
             return user.Categories.Select(x => x.CategoryId);

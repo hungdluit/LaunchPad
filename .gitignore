@@ -13,3 +13,4 @@
 /LaunchPad/Migrations
 /LaunchPad/bin
 *.db
+*.local.json
